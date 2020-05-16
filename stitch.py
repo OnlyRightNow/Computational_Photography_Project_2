@@ -33,3 +33,5 @@ if __name__ == "__main__":
     # cv2.imshow("Keypoint Matches", vis)
     cv2.imshow("Result", result)
     cv2.waitKey(0)
+    # Save result
+    cv2.imwrite("images/panorama.jpg", result);
