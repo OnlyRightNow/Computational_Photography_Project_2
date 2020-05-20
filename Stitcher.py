@@ -10,10 +10,10 @@ class Stitcher:
         # determine if we are using OpenCV v3.X
         self.isv3 = imutils.is_cv3(or_better=True)
 
-    def stitch(self, images, ratio=0.75, reprojThresh=4.0, showMatches=False):
+    def stitch(self, imageA, imageB, ratio=0.75, reprojThresh=4.0, showMatches=False):
         # unpack the images, then detect keypoints and extract
         # local invariant descriptors from them
-        (imageB, imageA) = images
+        # (imageB, imageA) = images
         (kpsA, featuresA) = self.detectAndDescribe(imageA)
         (kpsB, featuresB) = self.detectAndDescribe(imageB)
         # match features between the two images
@@ -33,9 +33,9 @@ class Stitcher:
                                    status)
             # return a tuple of the stitched image and the
             # visualization
-            return (result, vis)
+            return (result, H, vis)
         # return the stitched image
-        return result
+        return result, H
 
     def detectAndDescribe(self, image):
         # convert the image to grayscale
