@@ -5,8 +5,8 @@ import copy
 import numpy as np
 
 if __name__ == "__main__":
-    imageA = cv2.imread("images/boat1.jpg")
-    imageB = cv2.imread("images/boat2.jpg")
+    imageA = cv2.imread("images/random_forest2.jpg")
+    imageB = cv2.imread("images/random_forest1_lowexposure.jpg")
     imageA = imutils.resize(imageA, width=600)
     imageB = imutils.resize(imageB, width=600)
     # stitch the images together to create a panorama
