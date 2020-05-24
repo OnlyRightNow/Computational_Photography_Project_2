@@ -1,3 +1,5 @@
+import time
+
 import cv2
 import imutils
 from Stitcher import Stitcher
@@ -7,8 +9,10 @@ import numpy as np
 if __name__ == "__main__":
     imageA = cv2.imread("images/random_forest2.jpg")
     imageB = cv2.imread("images/random_forest1_lowexposure.jpg")
-    imageA = imutils.resize(imageA, width=600)
-    imageB = imutils.resize(imageB, width=600)
+    # imageA = cv2.imread("images/boat1.jpg")
+    # imageB = cv2.imread("images/boat2.jpg")
+    imageA = imutils.resize(imageA, width=2000)
+    imageB = imutils.resize(imageB, width=2000)
     # stitch the images together to create a panorama
     stitcher = Stitcher()
     (result, H, vis) = stitcher.stitch(imageB, imageA, showMatches=True)
@@ -35,19 +39,30 @@ if __name__ == "__main__":
     dest = copy.deepcopy(result)
     # center of the srouce image
     center = (cx, int(dest.shape[0]/2))
+    start = time.time()
     # apply poisson blending
     output = cv2.seamlessClone(src, dest, src_mask, center, cv2.NORMAL_CLONE)
+    end = time.time()
+    print("running time poisson blending: ", end-start)
+    # highlight the blended image by overlaying it the with the transparent blending mask
+    alpha = 0.3
+    blk = np.zeros(output.shape, output.dtype)
+    cv2.fillPoly(blk, [polygon], (0, 0, 255))
+    output_mask = cv2.addWeighted(output, 1-alpha, blk, alpha, 0)
     cv2.imshow("src", src)
     cv2.imshow("Wrapped Image", wrapped_image)
     cv2.imshow("Blending mask", src_mask)
     # show the images
     # cv2.imshow("Image A", imageA)
     # cv2.imshow("Image B", imageB)
-    # cv2.imshow("Keypoint Matches", vis)
+    cv2.imshow("Keypoint Matches", vis)
     cv2.imshow("Normal Panorama", result)
     cv2.imshow("Blended Panorama", output)
     cv2.waitKey(0)
     # Save result
-    cv2.imwrite("images/panorama_normal.jpg", result)
-    cv2.imwrite("images/panorama_blended.jpg", output)
-    cv2.imwrite("images/blending_mask.jpg", src_mask)
+    name = "randomforest_lowexposure"
+    cv2.imwrite("images/results/" + name + "_panorama_naive.jpg", result)
+    cv2.imwrite("images/results/" + name + "_panorama_blended.jpg", output)
+    cv2.imwrite("images/results/" + name + "_panorama_blended_mask.jpg", output_mask)
+    cv2.imwrite("images/results/" + name + "_blending_mask.jpg", src_mask)
+    cv2.imwrite("images/results/" + name + "_matches.jpg", vis)
